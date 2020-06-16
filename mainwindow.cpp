@@ -12,11 +12,11 @@ MainWindow::MainWindow(QWidget *parent)
     bufferSize = SOUND_BUFFER_SIZE * 2;
 
     m_format.setSampleRate(44100);
-    m_format.setChannelCount(1);
+    m_format.setChannelCount(2);
     m_format.setSampleSize(16);
     m_format.setCodec("audio/pcm");
     m_format.setByteOrder(QAudioFormat::LittleEndian);
-    m_format.setSampleType(QAudioFormat::Float);
+    m_format.setSampleType(QAudioFormat::SampleType::SignedInt);
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(m_format)) {
@@ -44,3 +44,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    this->close();
+}

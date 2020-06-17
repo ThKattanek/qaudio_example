@@ -11,18 +11,28 @@ MainWindow::MainWindow(QWidget *parent)
 
     bufferSize = SOUND_BUFFER_SIZE * 2;
 
+    // Default Audioformat (44100 / Stereo / Float)
     m_format.setSampleRate(44100);
     m_format.setChannelCount(2);
-    m_format.setSampleSize(16);
+    m_format.setSampleSize(32);
     m_format.setCodec("audio/pcm");
     m_format.setByteOrder(QAudioFormat::LittleEndian);
-    m_format.setSampleType(QAudioFormat::SampleType::SignedInt);
+    m_format.setSampleType(QAudioFormat::SampleType::Float);
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-    if (!info.isFormatSupported(m_format)) {
-        qWarning() << "Default format not supported - trying to use nearest";
-        m_format = info.nearestFormat(m_format);
+    if (!info.isFormatSupported(m_format))
+    {
+        qWarning() << "Default format not supported (44100/Stereo/Float)";
+
+        // Second Audioformat (44100/Stereo/Signed Int 16Bit)
+        m_format.setSampleSize(16);
+        m_format.setSampleType(QAudioFormat::SampleType::SignedInt);
+        if (!info.isFormatSupported(m_format))
+        {
+            qWarning() << "Default format not supported (44100/Stereo/Signed Int 16Bit)";
+        }
     }
+
     m_device = QAudioDeviceInfo::defaultOutputDevice();
     m_buffer = QByteArray(bufferSize*2, 0);
 

@@ -34,7 +34,7 @@ qint64 AudioGenerator::readData(char *data, qint64 len)
     memcpy(data, m_buffer.constData(), len);
     //curtime += (qreal)len/(44100*2);
 
-    qDebug() << "Audio Call:";
+    qDebug() << "Audio Call: " << len;
 
     return len;
 }

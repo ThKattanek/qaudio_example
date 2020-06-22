@@ -12,7 +12,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-#define SOUND_BUFFER_SIZE 4096
+#define SOUND_BUFFER_SIZE 8192
 
 class MainWindow : public QMainWindow
 {

@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_format.setByteOrder(QAudioFormat::LittleEndian);
     m_format.setSampleType(QAudioFormat::SampleType::Float);
 
+    bool is_supported_format = false;
+
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(m_format))
     {
@@ -29,20 +31,32 @@ MainWindow::MainWindow(QWidget *parent)
         m_format.setSampleType(QAudioFormat::SampleType::SignedInt);
         if (!info.isFormatSupported(m_format))
         {
-            qWarning() << "Default format not supported (44100/Stereo/Signed Int 16Bit)";
+            qWarning() << "Second format not supported (44100/Stereo/Signed Int 16Bit)";
+        }
+        else
+        {
+             qInfo() << "Current Audioformat: 44100/Stereo/Signed Int 16Bit";
+             is_supported_format = true;
         }
     }
+    else{
+        qInfo() << "Current Audioformat: 44100/Stereo/Float";
+        is_supported_format = true;
+    }
 
-    m_device = QAudioDeviceInfo::defaultOutputDevice();
-    m_buffer = QByteArray(bufferSize*2, 0);
+    if(is_supported_format)
+    {
+        m_device = QAudioDeviceInfo::defaultOutputDevice();
+        m_buffer = QByteArray(bufferSize*2, 0);
 
-    m_audioOutput = new QAudioOutput(m_device, m_format, this);
-    m_audioOutput->setBufferSize(bufferSize);
-    m_audiogen = new AudioGenerator(m_format, this);
-    m_audiogen->start();
-    m_audioOutput->start(m_audiogen);
+        m_audioOutput = new QAudioOutput(m_device, m_format, this);
+        m_audioOutput->setBufferSize(bufferSize);
+        m_audiogen = new AudioGenerator(m_format, this);
+        m_audiogen->start();
+        m_audioOutput->start(m_audiogen);
 
-    m_audioOutput->setVolume(1);
+        m_audioOutput->setVolume(1);
+    }
 
 }
 

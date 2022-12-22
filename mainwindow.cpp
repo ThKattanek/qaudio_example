@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <math.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,8 +53,11 @@ MainWindow::MainWindow(QWidget *parent)
         m_audioOutput = new QAudioOutput(m_device, m_format, this);
         m_audioOutput->setBufferSize(bufferSize);
         m_audiogen = new AudioGenerator(m_format, this);
+
+		connect(m_audiogen, SIGNAL(FillAudioData(char*, qint64)), this, SLOT(OnFillAudioData(char*, qint64)));
+
         m_audiogen->start();
-        m_audioOutput->start(m_audiogen);
+		m_audioOutput->start(m_audiogen);
 
         m_audioOutput->setVolume(1);
     }
@@ -62,12 +66,31 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+	disconnect(m_audiogen, SIGNAL(FillAudioData(char*, qint64)), this, SLOT(OnFillAudioData(char*, qint64)));
     m_audioOutput->stop();
     delete m_audioOutput;
 
     delete ui;
 }
 
+void MainWindow::OnFillAudioData(char *data, qint64 len)
+{
+	float *buffer = reinterpret_cast<float*>(data);
+
+	static float wave_value = 0.0f;
+	static float add_value = 440.0f / 44100.0f;
+
+	for(int i=0; i<(len / (m_format.sampleSize()/8)); i+=2)
+	{
+		float sample_out = sin(2 * M_PI * wave_value);
+		wave_value += add_value;
+
+		buffer[i] = sample_out;		// left channel
+		buffer[i+1] = sample_out;	// right channel;
+
+
+	}
+}
 
 void MainWindow::on_pushButton_clicked()
 {

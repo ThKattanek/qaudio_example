@@ -8,6 +8,10 @@
 
 class AudioGenerator : public QIODevice {
     Q_OBJECT
+
+signals:
+void FillAudioData(char *, qint64);
+
 public:
     AudioGenerator(const QAudioFormat &_format, QObject *parent);
     ~AudioGenerator();
@@ -21,7 +25,7 @@ public:
 
 private:
     QAudioFormat format;
-    QByteArray m_buffer;
+	QByteArray m_buffer;
 };
 
 #endif // AUDIOGENERATOR_H

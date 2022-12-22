@@ -23,6 +23,7 @@ public:
     ~MainWindow();
 
 private slots:
+	void OnFillAudioData(char *data, qint64 len);
     void on_pushButton_clicked();
 
 private:
